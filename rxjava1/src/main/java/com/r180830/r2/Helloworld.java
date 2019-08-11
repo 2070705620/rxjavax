@@ -4,14 +4,14 @@ import rx.Observable;
 import rx.Observable.OnSubscribe;
 import rx.Observer;
 import rx.Subscriber;
-import rx.observers.SafeSubscriber;
+import rx.Subscription;
 
 public class Helloworld {
 	public static void main(String[] args) {
 		Observer<String> observer = new Observer<String>() {
 			@Override
 			public void onNext(String t) {
-				System.err.println("收到消息:" + t);
+				System.out.println("收到消息:" + t);
 			}
 			@Override
 			public void onError(Throwable e) {
@@ -24,12 +24,16 @@ public class Helloworld {
 		Observable<String> observable = Observable.unsafeCreate(new OnSubscribe<String>() {
 			@Override
 			public void call(Subscriber<? super String> t) {
-				Debugger.set(1,  t);
-				SafeSubscriber<String> safeSubscriber = (SafeSubscriber)t;
-				System.out.println("Subscriber:"+t);
+				System.out.println("Subscriber:" + t);
+				new Thread(()->{
+					Debugger.sleep(100);
+					if(!t.isUnsubscribed()) {
+						t.onNext("abcd");
+					}
+				}) .start();
 			}
 		});
-		observable.subscribe(observer);
-		System.out.println("observer:" + observer);
+		Subscription subscription = observable.subscribe(observer);
+		subscription.unsubscribe();
 	}
 }
