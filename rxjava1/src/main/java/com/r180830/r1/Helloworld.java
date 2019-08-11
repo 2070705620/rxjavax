@@ -1,5 +1,6 @@
 package com.r180830.r1;
 
+import java.util.ArrayList;
 import java.util.stream.IntStream;
 
 import rx.Observable;
@@ -8,6 +9,7 @@ import rx.Subscriber;
 
 public class Helloworld {
 	public static void main(String[] args) {
+		new ArrayList<>();
 		Observable<String> observable = Observable.unsafeCreate(new Observable.OnSubscribe<String>() {
 			@Override
 			public void call(Subscriber<? super String> t) {
